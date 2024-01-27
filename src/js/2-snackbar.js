@@ -39,9 +39,3 @@ document.addEventListener('DOMContentLoaded', function () {
     );
   });
 });
-
-// iziToast.show({
-//   title: 'My Notification',
-//   message: 'This is a custom positioned notification!',
-//   position: 'topCenter',
-// });
