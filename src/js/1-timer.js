@@ -5,6 +5,7 @@ import 'izitoast/dist/css/iziToast.min.css';
 
 let userSelectedDate;
 const startButton = document.querySelector('[data-start]');
+let countdownInterval;
 
 const options = {
   enableTime: true,
@@ -18,6 +19,7 @@ const options = {
 
 document.addEventListener('DOMContentLoaded', function () {
   flatpickr('#datetime-picker', {
+    ...options,
     enableTime: true,
     dateFormat: 'Y-m-d H:i',
     onClose: function (selectedDates) {
@@ -28,6 +30,7 @@ document.addEventListener('DOMContentLoaded', function () {
           message: 'Please choose a date in the future',
         });
         startButton.disabled = true;
+        clearInterval(countdownInterval);
       } else {
         startButton.disabled = false;
       }
@@ -40,8 +43,6 @@ const hoursElement = document.querySelector('[data-hours]');
 const minutesElement = document.querySelector('[data-minutes]');
 const secondsElement = document.querySelector('[data-seconds]');
 
-let countdownInterval;
-
 function addLeadingZero(value) {
   return String(value).padStart(2, '0');
 }
@@ -50,6 +51,9 @@ function updateTimer() {
   const now = new Date().getTime();
   const targetDate = userSelectedDate.getTime();
   const timeDifference = targetDate - now;
+
+  const { days, hours, minutes, seconds, milliseconds } =
+    convertMs(timeDifference);
 
   if (timeDifference > 0) {
     const days = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
@@ -72,11 +76,12 @@ function updateTimer() {
     hoursElement.textContent = '00';
     minutesElement.textContent = '00';
     secondsElement.textContent = '00';
-  }
-}
 
-function formatTime(time) {
-  return time < 10 ? '0' + time : time;
+    iziToast.error({
+      title: 'Error',
+      message: 'Please choose a date in the future',
+    });
+  }
 }
 
 startButton.addEventListener('click', function () {
@@ -85,6 +90,18 @@ startButton.addEventListener('click', function () {
     alert('Please fill the field before starting.');
     return;
   }
+
+  const selectedDateTime = new Date(userSelectedDate).getTime();
+  const now = new Date().getTime();
+
+  if (userSelectedDate < now) {
+    iziToast.error({
+      title: 'Error',
+      message: 'Please choose a date in the future',
+    });
+    return;
+  }
+  clearInterval(countdownInterval);
   countdownInterval = setInterval(updateTimer, 1000);
 });
 

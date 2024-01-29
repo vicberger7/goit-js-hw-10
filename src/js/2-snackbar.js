@@ -6,10 +6,10 @@ document.addEventListener('DOMContentLoaded', function () {
     event.preventDefault();
 
     const delayInput = document.querySelector('input[name="delay"]');
-    const stateInputs = document.querySelectorAll('input[name="state"]');
+    const stateRadioButtons = document.querySelectorAll('input[name="state"]');
     const delay = parseInt(delayInput.value, 10);
 
-    const selectedState = Array.from(stateInputs).find(
+    const selectedState = Array.from(stateRadioButtons).find(
       input => input.checked
     ).value;
 
